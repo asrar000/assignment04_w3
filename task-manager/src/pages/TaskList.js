@@ -25,24 +25,22 @@ const TaskList = () => {
     }
   }, [data]);
 
-  const toggleTaskStatus = (taskId, e) => {
-    e.preventDefault(); // Prevent navigation when clicking toggle
-    
-    setTasks(prevTasks => {
-      const updated = prevTasks.map(task =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      );
-      
-      // Save to localStorage
-      const statuses = {};
-      updated.forEach(task => {
-        statuses[task.id] = task.completed;
-      });
-      localStorage.setItem('taskStatuses', JSON.stringify(statuses));
-      
-      return updated;
-    });
-  };
+  // Refresh tasks when returning from task details (to reflect status changes)
+  useEffect(() => {
+    const handleFocus = () => {
+      if (data) {
+        const savedStatuses = JSON.parse(localStorage.getItem('taskStatuses') || '{}');
+        const updatedTasks = data.map(task => ({
+          ...task,
+          completed: savedStatuses[task.id] !== undefined ? savedStatuses[task.id] : task.completed
+        }));
+        setTasks(updatedTasks);
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [data]);
 
   if (loading) return <Loader />;
   if (error) return <ErrorMessage message={error} />;
@@ -112,25 +110,23 @@ const TaskList = () => {
 
       <div className="grid gap-4">
         {currentTasks.map(task => (
-          <div
+          <Link
             key={task.id}
-            className={`${isDark ? 'bg-gray-800' : 'bg-white'} 
+            to={`/tasks/${task.id}`}
+            className={`${isDark ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50'} 
               p-6 rounded-lg shadow-md transition border-l-4 ${
               task.completed ? 'border-green-500' : 'border-yellow-500'
-            }`}
+            } block`}
           >
             <div className="flex justify-between items-start gap-4">
-              <Link 
-                to={`/tasks/${task.id}`}
-                className="flex-1 hover:opacity-80 transition"
-              >
+              <div className="flex-1">
                 <h3 className={`text-xl font-semibold mb-2 ${task.completed ? 'line-through opacity-60' : ''}`}>
                   {task.title}
                 </h3>
                 <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                   Task ID: {task.id}
                 </p>
-              </Link>
+              </div>
               
               <div className="flex items-center gap-3">
                 {task.completed && (
@@ -143,19 +139,9 @@ const TaskList = () => {
                     Pending
                   </span>
                 )}
-                <button
-                  onClick={(e) => toggleTaskStatus(task.id, e)}
-                  className={`px-4 py-2 rounded-lg font-semibold transition ${
-                    task.completed
-                      ? 'bg-yellow-500 hover:bg-yellow-600 text-white'
-                      : 'bg-green-500 hover:bg-green-600 text-white'
-                  }`}
-                >
-                  {task.completed ? 'Mark Incomplete' : 'Mark Complete'}
-                </button>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 

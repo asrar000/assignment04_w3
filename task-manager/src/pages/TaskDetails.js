@@ -166,12 +166,6 @@ const TaskDetails = () => {
               </button>
             </div>
           </div>
-
-          <div className={`${isDark ? 'bg-blue-900' : 'bg-blue-50'} p-4 rounded-lg`}>
-            <p className={`text-sm ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>
-              💡 <strong>Note:</strong> Status changes are saved locally and will persist across page reloads.
-            </p>
-          </div>
         </div>
       </div>
     </div>
