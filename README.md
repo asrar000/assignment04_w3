@@ -20,6 +20,14 @@ npm install
 npm start
 ```
 
+## Screenshots
+![Homepage Screenshot](images/home-page.png)
+![Task List](images/task-list.png)
+![Dark Mode](images/dark-mode.png)
+![Individual Task](images/individual-task.png)
+![Task State Change](images/task-state-change.png)
+
+
 ## Acknowledgements
 (JSONPlaceholder)[https://jsonplaceholder.typicode.com/] for the free REST API<br>
 (Tailwind CSS)[https://tailwindcss.com/] for the styling framework<br>
